@@ -1,0 +1,51 @@
+version: "3.8"  # Specify the Docker Compose version
+
+services:
+  app:
+    build:
+      context: .  # Use the current directory for the Dockerfile
+      dockerfile: Dockerfile
+    container_name: app_service
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app:ro  # Mount app files as read-only
+    ports:
+      - "8000:5000"  # Map host port 8000 to container port 5000
+    depends_on:
+      - db  # Ensure the database starts before the app
+    environment:
+      MONGO_URI: mongodb://db:27017/MyDb  # Pass MongoDB URI as environment variable
+
+  db:
+    image: mongo:6.0  # Use MongoDB 6.0
+    container_name: mongo_db
+    ports:
+      - "27017:27017"  # Map host port 27017 to container port 27017
+    volumes:
+      - mongo_data:/data/db  # Persistent storage for MongoDB data
+
+volumes:
+  mongo_data:  # Named volume for MongoDB data persistence
+
+# services:
+#   app:
+#     build:
+#       context: .  # Use the current directory for the Dockerfile
+#       dockerfile: Dockerfile
+#     container_name: app_service
+#     working_dir: /usr/src/app
+#     volumes:
+#       - .:/usr/src/app:ro
+#     ports:
+#       - "8000:5000"  #host , Container 
+#     depends_on:
+#       - db
+#     environment:
+#       - mongodb://localhost:27017/MyDb
+#   db:
+#     image: mongo:6.0
+#     container_name: mongo_db
+#     ports:
+#       - "27017:27017"  # host, Container
+#     volumes:
+#       - :/data/db
